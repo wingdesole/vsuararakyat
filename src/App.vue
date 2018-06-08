@@ -3,7 +3,6 @@
     id="inspire"
     dark
   >
-  /* eslint-disable */
     <v-navigation-drawer
       v-model="drawer"
       fixed
@@ -73,8 +72,9 @@
       <v-container fill-height>
         <v-layout justify-center align-center>
           <v-flex shrink>
+            <mainsuggestion/>
             <v-tooltip right>
-              <v-btn
+              <!-- <v-btn
                 slot="activator"
                 :href="source"
                 icon
@@ -82,13 +82,13 @@
                 target="_blank"
               >
               </v-btn>
-              <span>Source</span>
-            </v-tooltip>
+              <span>Source</span> -->
+            <!-- </v-tooltip>
             <v-tooltip right>
               <v-btn slot="activator" icon large href="https://codepen.io/johnjleider/pen/YeRKwQ" target="_blank">
                 <v-icon large>mdi-codepen</v-icon>
               </v-btn>
-              <span>Codepen</span>
+              <span>Codepen</span> -->
             </v-tooltip>
           </v-flex>
         </v-layout>
@@ -128,6 +128,26 @@ export default {
       { picture: 78, text: "MKBHD" }
     ]
   }),
+  beforeCreate() {
+    db.collection('suggestions').onSnapshot((querySnapshot) => {
+      querySnapshot.docChanges().forEach((suggestionQuery) => {
+        if (suggestionQuery.type === 'added') {
+          this.$set(
+            this.suggestions,
+            suggestionQuery.doc.id,
+            Object.assign(
+              { id: suggestionQuery.doc.id }, suggestionQuery.doc.data(),
+            ));
+        }
+        if (suggestionQuery.type === 'modified') {
+          this.$set(this.suggestions, suggestionQuery.doc.id, suggestionQuery.doc.data());
+        }
+        if (suggestionQuery.type === 'removed') {
+          this.$delete(this.suggestions, suggestionQuery.doc.id);
+        }
+      });
+    });
+  },
   props: {
     source: String
   }

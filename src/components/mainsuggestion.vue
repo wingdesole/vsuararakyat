@@ -26,6 +26,6 @@
 
 <script>
 export default {
-  props: ['title', 'reason', 'description', 'author', 'comment'],
+  props: ['title', 'reason', 'description'],
 };
 </script>
